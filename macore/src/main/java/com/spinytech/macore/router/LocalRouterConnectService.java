@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -120,13 +121,47 @@ public class LocalRouterConnectService extends Service {
     }
 
 
-    public static boolean checkResponseAsync(RouterRequest routerRequest) {
-        try {
-            RouteProto.RouteMessage routeMessage = RouterMessageUtil.routerMessage2Proto(routerRequest);
+    public static boolean checkResponseAsync(final RouterRequest routerRequest) {
+        final long id= System.nanoTime();
+        Callable<RouterResponse> callable = new Callable<RouterResponse>() {
+            @Override
+            public RouterResponse call() throws Exception {
+                try {
+                    RouteProto.RouteMessage routeMessage = RouterMessageUtil.routerMessage2Proto(routerRequest);
+                    routeMessage = routeMessage.toBuilder().setConnectType(RouteProto.RouteMessage.ConnectType.checkActionIsAsync).build();
+                    outputStream.write(routeMessage.toByteArray());
+                    outputStream.flush();
+                    ReceiveProtoListener receiveProtoListener = new ReceiveProtoListener() {
 
-        } catch (IOException e) {
+                        @Override
+                        public RouterResponse onReceiveMessage(RouteProto.RouteMessage routeMessage) {
+                            try {
+                                return RouterMessageUtil.protoMessage2ReceiveRouterMessage(routeMessage);
+
+                            } catch (NoSuchFieldException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                            return new RouterResponse();
+                        }
+                    };
+                    router.put(id, receiveProtoListener);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return new RouterResponse();
+            }
+        };
+        try {
+            Future<RouterResponse> submit = Threads.submit(callable);
+            RouterResponse routerResponse = submit.get();
+            return routerResponse.mIsAsync;
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     /**
@@ -174,9 +209,9 @@ public class LocalRouterConnectService extends Service {
             }
         };
 
-        Threads.submit(callable);
         try {
-            return callable.call();
+            Future<RouterResponse> submit = Threads.submit(callable);
+            return submit.get();
         } catch (Exception e) {
             e.printStackTrace();
         }
