@@ -1,0 +1,84 @@
+syntax = "proto2";
+option java_package = "com.spinytech.macore";
+option java_outer_classname = "RouteProto";
+package bean;
+
+message RouteMessage {
+
+    required sint64 id = 8;
+
+    /**
+    *从哪个进程来的
+    */
+    required string fromDomain = 1;
+    /**
+    *  要执行的操作在哪个进程中
+    */
+    optional string domain = 2;
+
+    /**
+    * 是否连接
+    */
+    optional bool isConnected = 3;
+    optional RouterResult result = 4;
+    optional RouterRequest request = 5;
+
+     /**
+     *  连接的类型
+     */
+     enum ConnectType {
+        ConnectWideService = 0;
+        SendRouteRequest = 1;
+        CheckConnected = 2;
+        ReceiveRouteResult = 3;
+        checkActionIsAsync = 4;
+    }
+    optional ConnectType connectType = 7 [default = ConnectWideService];
+}
+
+message RouterResult {
+
+    /**
+    *  内容提供商
+    */
+    optional string provider = 1;
+    /**
+    * 执行什么操作
+    */
+    optional string action = 2;
+    /**
+    * 这个是需要填入的参数
+    */
+    map<string, string> datas = 3;
+    /**
+     *  object 对象
+     */
+    optional bytes object = 4;
+    /**
+     *  这里是返回的结果,1 是表示成功,0表示失败
+     */
+    optional int32 resultCode =5 [default = -1];
+
+    optional string message = 6;
+
+    optional string data = 7;
+}
+
+message RouterRequest {
+    /**
+   *  内容提供商
+   */
+    optional string provider = 1;
+    /**
+    * 执行什么操作
+    */
+    optional string action = 2;
+    /**
+    * 这个是需要填入的参数
+    */
+    map<string, string> datas = 3;
+    /**
+     *  object 对象
+     */
+    optional bytes object = 4;
+}
