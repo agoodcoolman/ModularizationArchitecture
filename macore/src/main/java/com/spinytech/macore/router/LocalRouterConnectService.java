@@ -107,6 +107,23 @@ public class LocalRouterConnectService extends Service {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
+                        } else if (reveiveRouterMessage.getConnectType() == RouteProto.RouteMessage.ConnectType.checkActionIsAsync) {
+                            try {
+
+                                RouterRequest routerRequest = RouterMessageUtil.protoMessage2RequestRouterMessage(reveiveRouterMessage);
+                                boolean b = LocalRouter.getInstance(MaApplication.getMaApplication()).answerWiderAsync(routerRequest);
+                                RouteProto.RouteMessage responMessage = RouterMessageUtil.routerMessage2Proto(routerRequest);
+                                responMessage = responMessage.toBuilder()
+                                        .setConnectType(RouteProto.RouteMessage.ConnectType.ReceiveRouteResult)
+                                        .setDomain(reveiveRouterMessage.getFromDomain())
+                                        .setIsAsync(b)
+                                        .build();
+                                outputStream.write(responMessage.toByteArray());
+                            } catch (NoSuchFieldException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
                         }
 
                         Thread.sleep(1000);

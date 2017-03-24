@@ -169,6 +169,14 @@ public final class WideRouterConnectService extends Service {
                     } else if (routeMessage.getConnectType() == RouteProto.RouteMessage.ConnectType.ReceiveRouteResult) {
                         Logger.i(TAG, "WideRouteConnectService receive3  routeRequest" + routeMessage.toString());
                         OutputStream outputStream = localSockets.get(routeMessage.getDomain());
+
+                        if (outputStream != null) {
+                            outputStream.write(bytes1.toByteArray());
+                            outputStream.flush();
+                        }
+                    } else if (routeMessage.getConnectType() == RouteProto.RouteMessage.ConnectType.checkActionIsAsync) {
+                        Logger.i(TAG, "WideRouteConnectService receive9  routeRequest" + routeMessage.toString());
+                        OutputStream outputStream = localSockets.get(routeMessage.getDomain());
                         if (outputStream != null) {
                             outputStream.write(bytes1.toByteArray());
                             outputStream.flush();

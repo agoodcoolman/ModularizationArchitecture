@@ -65,6 +65,7 @@ public class RouterMessageUtil {
     public static RouterResponse protoMessage2ReceiveRouterMessage(RouteProto.RouteMessage routeMessage) throws NoSuchFieldException, IllegalAccessException {
         RouterResponse routerResponse = new RouterResponse();
         Class<? extends RouterResponse> aClass = routerResponse.getClass();
+
         if (routeMessage.hasResult()) {
             RouteProto.RouterResult result = routeMessage.getResult();
             Field mCode = aClass.getDeclaredField("mCode");
@@ -84,6 +85,17 @@ public class RouterMessageUtil {
             mObject.setAccessible(true);
             mObject.set(routerResponse, result.getObject());
 
+        }
+        boolean b = routeMessage.hasIsAsync();
+        Field mObject = aClass.getDeclaredField("mIsAsync");
+
+        if (b) {
+            mObject.setAccessible(true);
+            mObject.set(routerResponse, routeMessage.getIsAsync());
+
+        } else {
+            mObject.setAccessible(false);
+            mObject.set(routerResponse, routeMessage.getIsAsync());
         }
 
 

@@ -222,28 +222,7 @@ public class LocalRouter {
         @Override
         public String call() throws Exception {
             Logger.d(TAG, "Process:" + mProcessName + "\nBind wide router start: " + System.currentTimeMillis());
-//            connectWideRouter();
-            /*int time = 0;
-            while (true) {
-                if (null == mWideRouterAIDL) {
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    time++;
-                } else {
-                    break;
-                }
-                if (time >= 600) {
-                    ErrorAction defaultNotFoundAction = new ErrorAction(true, MaActionResult.CODE_CANNOT_BIND_WIDE, "Bind wide router time out. Can not bind wide router.");
-                    MaActionResult result = defaultNotFoundAction.invoke(mApplication, new HashMap<String, String>());
-                    mResponse.mResultString = result.toString();
-                    return result.toString();
-                }
-            }
-            Logger.d(TAG, "Process:" + mProcessName + "\nBind wide router end: " + System.currentTimeMillis());
-            String result = mWideRouterAIDL.route(mDomain, mRequestString);*/
+            /*new LocalRouterConnectService.LocalSocketClientConnectWideRouterConnectService(mProcessName);*/
             Logger.d(TAG, "Process:" + mProcessName + "\nWide async end: " + System.currentTimeMillis());
             return "";
         }

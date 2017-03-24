@@ -19,7 +19,7 @@ message RouteMessage {
     /**
     * 是否连接
     */
-    optional bool isConnected = 3;
+    optional bool isAsync = 3 [default = false];
     optional RouterResult result = 4;
     optional RouterRequest request = 5;
 
