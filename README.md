@@ -37,7 +37,7 @@ If you are using ProGuard you might need to add the following option:
 ## Other
 
 [Android架构思考](http://blog.spinytech.com/2016/12/28/android_modularization/)
-
+根据项目的原有的构思,修改成LocalSocket通信的方式,去掉AIDL的通信机制.
 ## License
 
 
